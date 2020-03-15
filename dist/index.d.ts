@@ -1,3 +1,3 @@
-import Core from "wg-core";
-declare const _default: Core.Service[];
+import { Service } from "wg-core";
+declare const _default: Service[];
 export default _default;

@@ -1,5 +1,5 @@
-import Core from "wg-core";
+import { Service } from "wg-core";
 import AppHandler from "./src/apphandler";
-const services: Array<Core.Service> = [];
+const services: Array<Service> = [];
 
 export default services.concat(AppHandler);
