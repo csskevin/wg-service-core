@@ -6,18 +6,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs = __importStar(require("fs"));
-var wg_core_1 = __importDefault(require("wg-core"));
+var wg_core_1 = require("wg-core");
 var body_parser = require("body-parser");
-wg_core_1.default.Driver.register({
+wg_core_1.Driver.register({
     method: "get",
     path: "/",
     handler: function (req, res) {
-        var app = wg_core_1.default.Verification.getAppBySubdomain(req);
+        var app = wg_core_1.Verification.getAppBySubdomain(req);
         if (app.id === false) {
             res.send("Could not find app!");
             return;
@@ -26,17 +23,17 @@ wg_core_1.default.Driver.register({
         res.redirect("/" + file_entry);
     }
 });
-wg_core_1.default.Driver.register({
+wg_core_1.Driver.register({
     method: "get",
     path: "/*",
     handler: function (req, res) {
-        var app = wg_core_1.default.Verification.getAppBySubdomain(req);
+        var app = wg_core_1.Verification.getAppBySubdomain(req);
         if (app.id === false) {
             res.send("Could not find app!");
             return;
         }
         var filepath = req.params[0] || "index.html";
-        var app_fullpath = wg_core_1.default.Workfolder.app_path + "/" + app.package_name + "/" + app.entry + "/" + filepath;
+        var app_fullpath = wg_core_1.Workfolder.app_path + "/" + app.package_name + "/" + app.entry + "/" + filepath;
         if (fs.existsSync(app_fullpath)) {
             var realpath_app_fullpath = fs.realpathSync(app_fullpath);
             res.sendFile(realpath_app_fullpath);
@@ -46,22 +43,22 @@ wg_core_1.default.Driver.register({
         }
     }
 });
-wg_core_1.default.Driver.register({
+wg_core_1.Driver.register({
     method: "post",
     path: "/api/install_app",
     parser: body_parser.json,
     handler: function (req, res) {
-        var app = wg_core_1.default.Verification.getAppBySubdomain(req);
+        var app = wg_core_1.Verification.getAppBySubdomain(req);
         if (app.id === false) {
             res.send("Could not find app!");
             return;
         }
-        if (wg_core_1.default.Permission.hasSpecificPermission(app.id, "apps_control")) {
+        if (wg_core_1.Permission.hasSpecificPermission(app.id, "apps_control")) {
             var request_body = req.body;
             if (typeof request_body === 'object') {
                 var path = request_body === null || request_body === void 0 ? void 0 : request_body.path;
                 if (path) {
-                    wg_core_1.default.Apps.installApp(path).then(function () {
+                    wg_core_1.Apps.installApp(path).then(function () {
                         res.json({ error: 0, message: "App installed." });
                     }).catch(function (err) {
                         res.json({ error: 1, message: err });
@@ -80,22 +77,22 @@ wg_core_1.default.Driver.register({
         }
     }
 });
-wg_core_1.default.Driver.register({
+wg_core_1.Driver.register({
     method: "post",
     path: "/api/uninstall_app",
     parser: body_parser.json,
     handler: function (req, res) {
-        var app = wg_core_1.default.Verification.getAppBySubdomain(req);
+        var app = wg_core_1.Verification.getAppBySubdomain(req);
         if (app.id === false) {
             res.send("Could not find app!");
             return;
         }
-        if (wg_core_1.default.Permission.hasSpecificPermission(app.id, "apps_control")) {
+        if (wg_core_1.Permission.hasSpecificPermission(app.id, "apps_control")) {
             var request_body = req.body;
             if (typeof request_body === 'object') {
                 var app_name = request_body === null || request_body === void 0 ? void 0 : request_body.app_name;
                 if (app_name) {
-                    if (wg_core_1.default.Apps.uninstallApp(app_name)) {
+                    if (wg_core_1.Apps.uninstallApp(app_name)) {
                         res.json({ error: 0, message: "App uninstalled." });
                     }
                     else {
@@ -115,4 +112,4 @@ wg_core_1.default.Driver.register({
         }
     }
 });
-exports.default = wg_core_1.default.Driver.export();
+exports.default = wg_core_1.Driver.export();
